@@ -55,12 +55,13 @@ export class FileSystemDatasource implements LogDatasource {
 
     private getLogsFromFile = ( path: string ): LogEntity[] => {
         const content = fs.readFileSync(path, 'utf-8');
+        if( content === '' ) return [];
         const logs = content.split('\n').map(log => LogEntity.fromJson(log));
-        return logs
+        return logs;
 
     }
 
-    getLogs(severityLavel: LogSeverityLevel): LogEntity[] {
+    async getLogs(severityLavel: LogSeverityLevel): Promise<LogEntity[]> {
 
         switch ( severityLavel ) {
             case LogSeverityLevel.low:     
@@ -71,8 +72,7 @@ export class FileSystemDatasource implements LogDatasource {
 
                 case LogSeverityLevel.high: 
                 return this.getLogsFromFile(this.highLogsPath)
-            default:
-                throw new Error(`${severityLavel} is not iplemented`);;
+
         }
     }
 
